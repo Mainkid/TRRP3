@@ -1,0 +1,26 @@
+version: '3'
+services:
+  database_film:
+    container_name: film_DB
+    image: "postgres:12"
+    logging:
+      options:
+        max-size: "100M"
+        max-file: "1"
+    env_file:
+      ./DB/database.env
+    volumes:
+      - ./DB_volume:/var/lib/postgresql/data/
+      - ./DB/dump.sql:/docker-entrypoint-initdb.d/1.sql
+  my_server_rpc:
+    container_name: server_rpc
+    logging:
+      options:
+        max-size: "100M"
+        max-file: "1"
+    build: .
+    ports:
+      - "5432:5432"
+    depends_on:
+      - database_film
+
