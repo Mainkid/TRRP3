@@ -21,7 +21,7 @@ def connect_to_psql():
     )
     return (psql_con.cursor(),psql_con)
 
-    print("Database opened successfully")
+
 
 def genreTable(result):
     psql_cur.execute("SELECT COUNT(*) FROM genre WHERE genre_name= %s",  (result,))
@@ -78,40 +78,43 @@ class RouteGuideServicer(route_guide_pb2_grpc.RouteGuideServicer):
     def __init__(self):
         pass
 
-    def AddCountry(self, request, context):
-        print(request)
-        countryTable(request.name)
+    def AddCountry(self, request_iterator, context):
+        for request in request_iterator:
+            countryTable(request.name)
         return route_guide_pb2.Result(result="OK")
 
 
-    def AddSession(self, request, context):
-        print(request)
-        sessionTable(request.hall,request.film,request.time)
+    def AddSession(self, request_iterator, context):
+        for request in request_iterator:
+            sessionTable(request.hall, request.film, request.time)
         return route_guide_pb2.Result(result="OK")
 
-    def AddFilm(self, request, context):
-        print(request)
-        filmTable(request.genre,request.country,request.rating,request.title)
+    def AddFilm(self, request_iterator, context):
+        for request in request_iterator:
+            filmTable(request.genre,request.country,request.rating,request.title)
         return route_guide_pb2.Result(result="OK")
 
-    def AddGenre(self, request, context):
-        print(request)
-        genreTable(request.name)
+    def AddGenre(self, request_iterator, context):
+        for request in request_iterator:
+            genreTable(request.name)
         return route_guide_pb2.Result(result="OK")
 
-    def AddHall(self, request, context):
-        print(request)
-        hallTable(request.hall_no,request.hall_type,request.capacity)
+    def AddHall(self, request_iterator, context):
+        for request in request_iterator:
+            hallTable(request.hall_no,request.hall_type,request.capacity)
         return route_guide_pb2.Result(result="OK")
 
 
 
 
 def serve():
+    config = configparser.ConfigParser()  # создаём объекта парсера
+    config.read(r"server_config.ini")
     server = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     route_guide_pb2_grpc.add_RouteGuideServicer_to_server(
         RouteGuideServicer(), server)
-    server.add_insecure_port('[::]:50051')
+    server.add_insecure_port('[::]:'+config['server']['port'])
+
     server.start()
     server.wait_for_termination()
 

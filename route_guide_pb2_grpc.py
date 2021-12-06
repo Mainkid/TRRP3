@@ -14,27 +14,27 @@ class RouteGuideStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.AddCountry = channel.unary_unary(
+        self.AddCountry = channel.stream_unary(
                 '/RouteGuide/AddCountry',
                 request_serializer=route__guide__pb2.Country.SerializeToString,
                 response_deserializer=route__guide__pb2.Result.FromString,
                 )
-        self.AddGenre = channel.unary_unary(
+        self.AddGenre = channel.stream_unary(
                 '/RouteGuide/AddGenre',
                 request_serializer=route__guide__pb2.Genre.SerializeToString,
                 response_deserializer=route__guide__pb2.Result.FromString,
                 )
-        self.AddHall = channel.unary_unary(
+        self.AddHall = channel.stream_unary(
                 '/RouteGuide/AddHall',
                 request_serializer=route__guide__pb2.Hall.SerializeToString,
                 response_deserializer=route__guide__pb2.Result.FromString,
                 )
-        self.AddFilm = channel.unary_unary(
+        self.AddFilm = channel.stream_unary(
                 '/RouteGuide/AddFilm',
                 request_serializer=route__guide__pb2.Film.SerializeToString,
                 response_deserializer=route__guide__pb2.Result.FromString,
                 )
-        self.AddSession = channel.unary_unary(
+        self.AddSession = channel.stream_unary(
                 '/RouteGuide/AddSession',
                 request_serializer=route__guide__pb2.Session.SerializeToString,
                 response_deserializer=route__guide__pb2.Result.FromString,
@@ -44,31 +44,31 @@ class RouteGuideStub(object):
 class RouteGuideServicer(object):
     """Missing associated documentation comment in .proto file."""
 
-    def AddCountry(self, request, context):
+    def AddCountry(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def AddGenre(self, request, context):
+    def AddGenre(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def AddHall(self, request, context):
+    def AddHall(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def AddFilm(self, request, context):
+    def AddFilm(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def AddSession(self, request, context):
+    def AddSession(self, request_iterator, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -77,27 +77,27 @@ class RouteGuideServicer(object):
 
 def add_RouteGuideServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'AddCountry': grpc.unary_unary_rpc_method_handler(
+            'AddCountry': grpc.stream_unary_rpc_method_handler(
                     servicer.AddCountry,
                     request_deserializer=route__guide__pb2.Country.FromString,
                     response_serializer=route__guide__pb2.Result.SerializeToString,
             ),
-            'AddGenre': grpc.unary_unary_rpc_method_handler(
+            'AddGenre': grpc.stream_unary_rpc_method_handler(
                     servicer.AddGenre,
                     request_deserializer=route__guide__pb2.Genre.FromString,
                     response_serializer=route__guide__pb2.Result.SerializeToString,
             ),
-            'AddHall': grpc.unary_unary_rpc_method_handler(
+            'AddHall': grpc.stream_unary_rpc_method_handler(
                     servicer.AddHall,
                     request_deserializer=route__guide__pb2.Hall.FromString,
                     response_serializer=route__guide__pb2.Result.SerializeToString,
             ),
-            'AddFilm': grpc.unary_unary_rpc_method_handler(
+            'AddFilm': grpc.stream_unary_rpc_method_handler(
                     servicer.AddFilm,
                     request_deserializer=route__guide__pb2.Film.FromString,
                     response_serializer=route__guide__pb2.Result.SerializeToString,
             ),
-            'AddSession': grpc.unary_unary_rpc_method_handler(
+            'AddSession': grpc.stream_unary_rpc_method_handler(
                     servicer.AddSession,
                     request_deserializer=route__guide__pb2.Session.FromString,
                     response_serializer=route__guide__pb2.Result.SerializeToString,
@@ -113,7 +113,7 @@ class RouteGuide(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
-    def AddCountry(request,
+    def AddCountry(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -123,14 +123,14 @@ class RouteGuide(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RouteGuide/AddCountry',
+        return grpc.experimental.stream_unary(request_iterator, target, '/RouteGuide/AddCountry',
             route__guide__pb2.Country.SerializeToString,
             route__guide__pb2.Result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def AddGenre(request,
+    def AddGenre(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -140,14 +140,14 @@ class RouteGuide(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RouteGuide/AddGenre',
+        return grpc.experimental.stream_unary(request_iterator, target, '/RouteGuide/AddGenre',
             route__guide__pb2.Genre.SerializeToString,
             route__guide__pb2.Result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def AddHall(request,
+    def AddHall(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -157,14 +157,14 @@ class RouteGuide(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RouteGuide/AddHall',
+        return grpc.experimental.stream_unary(request_iterator, target, '/RouteGuide/AddHall',
             route__guide__pb2.Hall.SerializeToString,
             route__guide__pb2.Result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def AddFilm(request,
+    def AddFilm(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -174,14 +174,14 @@ class RouteGuide(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RouteGuide/AddFilm',
+        return grpc.experimental.stream_unary(request_iterator, target, '/RouteGuide/AddFilm',
             route__guide__pb2.Film.SerializeToString,
             route__guide__pb2.Result.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
 
     @staticmethod
-    def AddSession(request,
+    def AddSession(request_iterator,
             target,
             options=(),
             channel_credentials=None,
@@ -191,7 +191,7 @@ class RouteGuide(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/RouteGuide/AddSession',
+        return grpc.experimental.stream_unary(request_iterator, target, '/RouteGuide/AddSession',
             route__guide__pb2.Session.SerializeToString,
             route__guide__pb2.Result.FromString,
             options, channel_credentials,

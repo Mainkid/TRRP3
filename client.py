@@ -22,8 +22,21 @@ import grpc
 import route_guide_pb2
 import route_guide_pb2_grpc
 import sqlite3 as sq
+import configparser
 
 columns= {}
+
+filmList=[]
+countryList=[]
+genreList=[]
+hallList=[]
+sessionList=[]
+
+def generate_route(feature_list):
+    for i in range(0, len(feature_list)):
+        feature = feature_list[i]
+        yield feature
+
 
 def generate_dictionary():
     with sq.connect("DB.db") as con:
@@ -38,7 +51,9 @@ def fill_genre_table(stub):
         cur = con.cursor()
         cur.execute("SELECT DISTINCT genre_name FROM Table_film")
         for result in cur:
-            rpc_Add_Genre(stub,result[0])
+            genre=route_guide_pb2.Genre(name=result[0])
+            genreList.append(genre)
+            #rpc_Add_Genre(stub,result[0])
 
 
 
@@ -49,7 +64,8 @@ def fill_country_table(stub):
         cur = con.cursor()
         cur.execute("SELECT DISTINCT film_country FROM Table_film")
         for result in cur:
-            rpc_Add_Country(stub,result[0])
+            country = route_guide_pb2.Country(name=result[0])
+            countryList.append(country)
 
 
 
@@ -60,7 +76,9 @@ def fill_hall_table(stub):
         cur = con.cursor()
         cur.execute("SELECT DISTINCT hall_no, hall_type, hall_capacity FROM Table_film")
         for result in cur:
-            rpc_Add_Hall(stub,result[0],result[2],result[1])
+            hall = route_guide_pb2.Hall(hall_no=result[0], capacity=result[2], hall_type=result[1])
+            hallList.append(hall)
+            #rpc_Add_Hall(stub,result[0],result[2],result[1])
 
 
 def fill_film_table(stub):
@@ -71,10 +89,10 @@ def fill_film_table(stub):
         cur.execute("SELECT  DISTINCT film_name, raiting, genre_name,"
                     "film_country from Table_film")
         for result in cur:
-            #film_list.append(list(result))
-            rpc_Add_Film(stub,result[2],result[3],result[0],result[1])
-            data = {"Table": "film",
-                    "Arr": list(result)}
+            film=route_guide_pb2.Film(genre=result[2],country=result[3],title=result[0],rating=result[1])
+            filmList.append(film)
+            #rpc_Add_Film(stub,result[2],result[3],result[0],result[1])
+
 
 
 
@@ -85,54 +103,67 @@ def fill_session_table(stub):
         cur = con.cursor()
         cur.execute("SELECT film_name, hall_no, time FROM Table_film")
         for result in cur:
-            rpc_Add_Session(stub,result[1],result[0],result[2])
-            data = {"Table": "session",
-                    "Arr": list(result)}
+            session1=route_guide_pb2.Session(hall=result[1],film=result[0],time=result[2])
+            sessionList.append(session1)
+            #rpc_Add_Session(stub,result[1],result[0],result[2])
 
 
 
-def rpc_Add_Country(stub,country_name):
-    country = route_guide_pb2.Country(name=country_name)
-    response=stub.AddCountry(country)
-    print(response)
 
 
-def rpc_Add_Genre(stub,genre_name):
-    genre = route_guide_pb2.Genre(name=genre_name)
-    response=stub.AddGenre(genre)
-    print(response)
+def rpc_Add_Country(stub,feature_list):
+    #country = route_guide_pb2.Country(name=country_name)
+    iterator=generate_route(feature_list)
+    response=stub.AddCountry(iterator)
+    print(response.result)
 
 
-def rpc_Add_Hall(stub,hall_no,capacity,hall_type):
-    hall = route_guide_pb2.Hall(hall_no=hall_no, capacity=capacity,hall_type=hall_type)
-    response=stub.AddHall(hall)
-    print(response)
+def rpc_Add_Genre(stub,feature_list):
+    #genre = route_guide_pb2.Genre(name=genre_name)
+    iterator = generate_route(feature_list)
+    response=stub.AddGenre(iterator)
+    print(response.result)
 
 
-def rpc_Add_Film(stub,genre,country,title,raiting):
-    film = route_guide_pb2.Film(genre=genre,country=country,title=title,rating=raiting)
-    response=stub.AddFilm(film)
-    print(response)
+def rpc_Add_Hall(stub,feature_list):
+    #hall = route_guide_pb2.Hall(hall_no=hall_no, capacity=capacity,hall_type=hall_type)
+    iterator = generate_route(feature_list)
+    response=stub.AddHall(iterator)
+    print(response.result)
 
 
-def rpc_Add_Session(stub,hall,film,datetime):
-    session1=route_guide_pb2.Session(hall=hall,film=film,time=datetime)
-    response=stub.AddSession(session1)
-    print(response)
+def rpc_Add_Film(stub,feature_list):
+    #film = route_guide_pb2.Film(genre=genre,country=country,title=title,rating=raiting)
+    iterator = generate_route(feature_list)
+    response=stub.AddFilm(iterator)
+    print(response.result)
+
+
+def rpc_Add_Session(stub,feature_list):
+    #session1=route_guide_pb2.Session(hall=hall,film=film,time=datetime)
+    iterator = generate_route(feature_list)
+    response=stub.AddSession(iterator)
+    print(response.result)
 
 
 
 def run():
-    # NOTE(gRPC Python Team): .close() is possible on a channel and should be
-    # used in circumstances in which the with statement does not fit the needs
-    # of the code.
-    with grpc.insecure_channel('localhost:50051') as channel:
+    config = configparser.ConfigParser()  # создаём объекта парсера
+    config.read(r"client_config.ini")
+    with grpc.insecure_channel(config['server']['host']+':'+config['server']['port']) as channel:
+
         stub = route_guide_pb2_grpc.RouteGuideStub(channel)
         fill_country_table(stub)
         fill_genre_table(stub)
         fill_hall_table(stub)
         fill_film_table(stub)
         fill_session_table(stub)
+        rpc_Add_Country(stub,countryList)
+        rpc_Add_Genre(stub,genreList)
+        rpc_Add_Hall(stub,hallList)
+        rpc_Add_Film(stub,filmList)
+        rpc_Add_Session(stub,sessionList)
+
 
 
 if __name__ == '__main__':

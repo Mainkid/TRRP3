@@ -3,15 +3,15 @@ syntax = "proto3";
 import "google/protobuf/timestamp.proto";
 
 service RouteGuide {
-  rpc AddCountry(Country) returns (Result) {}
+  rpc AddCountry(stream Country) returns (Result) {}
 
-  rpc AddGenre(Genre) returns (Result){}
+  rpc AddGenre(stream Genre) returns (  Result){}
 
-  rpc AddHall(Hall) returns (Result){}
+  rpc AddHall(stream Hall) returns ( Result){}
 
-  rpc AddFilm(Film) returns (Result){}
+  rpc AddFilm(stream Film) returns (Result){}
 
-  rpc AddSession(Session) returns (Result){}
+  rpc AddSession(stream Session) returns (Result){}
 }
 
 message Session{
@@ -45,34 +45,6 @@ message Hall{
   int32 hall_no=3;
 }
 
-message Point {
-  int32 latitude = 1;
-  int32 longitude = 2;
-}
-
-message Rectangle {
-  Point lo = 1;
-  Point hi = 2;
-}
-
 message Result {
   string result=1;
-}
-
-// A RouteNote is a message sent while at a given point.
-message RouteNote {
-  Point location = 1;
-  string message = 2;
-}
-
-// A RouteSummary is received in response to a RecordRoute rpc.
-//
-// It contains the number of individual points received, the number of
-// detected features, and the total distance covered as the cumulative sum of
-// the distance between each point.
-message RouteSummary {
-  int32 point_count = 1;
-  int32 feature_count = 2;
-  int32 distance = 3;
-  int32 elapsed_time = 4;
 }
